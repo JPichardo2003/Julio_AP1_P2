@@ -20,5 +20,10 @@
     <ProjectReference Include="..\Shared\Julio_AP1_P2.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+
 
 </Project>
