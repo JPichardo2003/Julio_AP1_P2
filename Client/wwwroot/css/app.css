@@ -1,5 +1,35 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.id-input {
+    width: 150px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.filter-input {
+    width: 300px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.table thead th {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
