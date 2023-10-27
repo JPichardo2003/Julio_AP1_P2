@@ -19,6 +19,7 @@ namespace Julio_AP1_P2.Shared.Models
         [Required(ErrorMessage = "Campo Obligatorio")]
         public int Tipo { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = "Este campo no puede ser < 0")]
         public int Existencia { get; set; }
 
     }
