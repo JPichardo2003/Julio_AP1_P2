@@ -19,11 +19,9 @@ namespace Julio_AP1_P2.Shared.Models
         [Required(ErrorMessage ="Campo Obligatorio")]
         public string? Concepto { get; set; }
 
-        [Range(1, float.MaxValue, ErrorMessage = "El Peso Total debe ser > 0")]
         public float PesoTotal { get; set; }
         public int ProductoId { get; set; }
 
-        [Range(1, float.MaxValue, ErrorMessage = "La cantidad producida debe ser > 0")]
         public float CantidadProducida { get; set; }
 
         [ForeignKey("EntradaId")]

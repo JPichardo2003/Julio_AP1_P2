@@ -12,14 +12,8 @@ namespace Julio_AP1_P2.Shared.Models
     {
         [Key]
         public int ProductoId { get; set; }
-
-        [Required(ErrorMessage = "Campo Obligatorio")]
         public string? Descripción { get; set; }
-
-        [Required(ErrorMessage = "Campo Obligatorio")]
         public int Tipo { get; set; }
-
-        [Range(0, int.MaxValue, ErrorMessage = "Este campo no puede ser < 0")]
         public int Existencia { get; set; }
 
     }

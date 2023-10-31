@@ -14,8 +14,6 @@ namespace Julio_AP1_P2.Shared.Models
         public int DetalleId { get; set; }
         public int EntradaId { get; set; }
         public int ProductoId { get; set; }
-
-        [Range(1, float.MaxValue, ErrorMessage ="La cantidad utilizada debe ser > 0")]
         public float CantidadUtilizada { get; set; }
     }
 }
