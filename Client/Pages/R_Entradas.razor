@@ -41,15 +41,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <label>Producto</label>
-                    <InputSelect @bind-Value="P_Id" class="form-select">
-                        <option value="@entradas.ProductoId" hidden="hidden">Seleccione</option>
+                    <InputSelect @bind-Value="Detalles.ProductoId" class="form-select">
+                        <option value="" hidden="hidden">Seleccione</option>
                         @foreach (var p in ListaProductos)
                         {
                             if(p.Tipo == 0)
                             {
                                 <option value="@p.ProductoId">@p.Descripción</option>
-                            }
-                            
+                            }    
                         }
                     </InputSelect>
                     <ValidationMessage For="@(() => Detalles.ProductoId)" />
@@ -57,7 +56,7 @@
                 <div class="col-md-6">
                     <label>Cantidad</label>
                     <div class="input-group">
-                        <InputNumber @bind-Value="C_Utilizada" class="form-control"></InputNumber>
+                        <InputNumber @bind-Value="Detalles.CantidadUtilizada" class="form-control"></InputNumber>
                         <button type="button" class="btn btn-success" @onclick="AgregarDetalle"><i class="oi oi-plus" />Add</button>
                         <ValidationMessage For="@(() => Detalles.CantidadUtilizada)" />
                     </div>
@@ -102,7 +101,7 @@
     public EntradasDetalle Detalles { get; set; } = new EntradasDetalle();
     public List<Productos> ListaProductos { get; set; } = new List<Productos>();
 
-    public int C_Utilizada { get; set; } = 0;
+    public float C_Utilizada { get; set; } = 0;
     public int P_Id { get; set; } = 0;
     public float PesoT { get; set; } = 0;
 
@@ -237,8 +236,8 @@
 
     public bool Validar()
     {
-        idVacio = (P_Id <=0);
-        cantidadCero = (C_Utilizada <= 0);
+        idVacio = (Detalles.ProductoId <=0);
+        cantidadCero = (Detalles.CantidadUtilizada <= 0);
         return idVacio || cantidadCero;
     }
 
@@ -256,27 +255,33 @@
             notificationService.Notify(mensaje);
             return;
         }
-        entradas.EntradasDetalle.Add(new EntradasDetalle()
-            {
-                EntradaId = entradas.EntradaId,
-                ProductoId = P_Id,
-                CantidadUtilizada = C_Utilizada
-            }); 
-        PesoT += C_Utilizada;
+        if (entradas != null)
+        {
+            Detalles.EntradaId = entradas.EntradaId;
+            entradas.EntradasDetalle.Add(Detalles);
+            Detalles = new EntradasDetalle();
+            PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
+
+        }
+        else
+        {
+
+        }
         StateHasChanged();
     }
 
     public async Task RemoverDetalle(EntradasDetalle detalle)
     {
-        var detalleEncontrado = entradas.EntradasDetalle.FirstOrDefault(e => e.DetalleId == detalle.DetalleId);
-        if (detalleEncontrado != null)
+        var detalleEncontrado = entradas.EntradasDetalle.FirstOrDefault(d => d.DetalleId == detalle.DetalleId);
+        if(detalleEncontrado != null)
         {
             var entrada = BuscarEntrada(detalleEncontrado.EntradaId);
             detalle = detalleEncontrado;
             Detalles = detalleEncontrado;
-            PesoT -= detalleEncontrado.CantidadUtilizada;
             entradas.EntradasDetalle.Remove(detalle);
-            await httpClient.DeleteAsync($"api/Entradas/DeleteEntradasMessages/{detalle.DetalleId}");
+            PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
+            await httpClient.DeleteAsync($"api/Entradas/DeleteEntradaDetalle/{detalle.DetalleId}");
         }
+        StateHasChanged();
     }
 }
