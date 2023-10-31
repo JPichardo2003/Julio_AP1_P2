@@ -14,7 +14,7 @@ namespace Julio_AP1_P2.Shared.Models
         public int ProductoId { get; set; }
         public string? Descripción { get; set; }
         public int Tipo { get; set; }
-        public int Existencia { get; set; }
+        public float Existencia { get; set; }
 
     }
 }
