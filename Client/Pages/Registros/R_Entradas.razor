@@ -241,7 +241,7 @@
         return idVacio || cantidadCero;
     }
 
-    public void AgregarDetalle()
+    public async Task AgregarDetalle()
     {
         if (Validar())
         {
@@ -255,6 +255,23 @@
             notificationService.Notify(mensaje);
             return;
         }
+        var producto = await BuscarProductos(Detalles.ProductoId);
+        if(producto != null)
+        {
+            if(Detalles.CantidadUtilizada > producto.Existencia)
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = $"No hay suficiente cantidad de {producto.Descripción} en el inventario ({producto.Existencia})",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+                return;
+            }
+        }
+
         if (entradas != null)
         {
             Detalles.EntradaId = entradas.EntradaId;
@@ -283,5 +300,12 @@
             await httpClient.DeleteAsync($"api/Entradas/DeleteEntradaDetalle/{detalle.DetalleId}");
         }
         StateHasChanged();
+    }
+
+    private async Task<Productos> BuscarProductos(int ProductoId)
+    {
+        var producto = await httpClient.GetFromJsonAsync<Productos>($"api/Productos/{ProductoId}");
+
+        return producto ?? new Productos();
     }
 }
