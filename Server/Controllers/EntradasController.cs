@@ -41,9 +41,9 @@ namespace Julio_AP1_P2.Server.Controllers
               return NotFound();
           }
             var entradas = await _context.Entradas
-            .Include(e => e.EntradasDetalle)
-            .Where(e => e.EntradaId == id)
-            .FirstOrDefaultAsync();
+                .Include(e => e.EntradasDetalle)
+                .Where(e => e.EntradaId == id)
+                .FirstOrDefaultAsync();
 
             if (entradas == null)
             {
@@ -89,12 +89,13 @@ namespace Julio_AP1_P2.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Entradas>> PostEntradas(Entradas entradas)
         {
-            if(!EntradasExists(entradas.EntradaId))
+            if (!EntradasExists(entradas.EntradaId))
                 _context.Entradas.Add(entradas);
             else
                 _context.Entradas.Update(entradas);
 
             await _context.SaveChangesAsync();
+
             return Ok(entradas);
         }
 
@@ -118,25 +119,23 @@ namespace Julio_AP1_P2.Server.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Entradas/5
-        [HttpDelete("DeleteEntradasMessages/{id}")]
-        public async Task<IActionResult> DeleteEntradasMessages(int id)
+        [HttpDelete("DeleteDetalles/{id}")]
+        public async Task<IActionResult> DeleteDetalles(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
             }
-            var entrada = await _context.EntradasDetalle.FirstOrDefaultAsync(ed => ed.DetalleId == id);
-            if (entrada is null)
+            var entradas = await _context.EntradasDetalle.FirstOrDefaultAsync(td => td.DetalleId == id);
+            if (entradas is null)
             {
                 return NotFound();
             }
-            _context.EntradasDetalle.Remove(entrada);
+            _context.EntradasDetalle.Remove(entradas);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
-
         private bool EntradasExists(int id)
         {
             return (_context.Entradas?.Any(e => e.EntradaId == id)).GetValueOrDefault();
