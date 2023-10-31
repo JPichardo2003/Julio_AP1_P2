@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Julio_AP1_P2.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class InicialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,7 +36,7 @@ namespace Julio_AP1_P2.Server.Migrations
                 {
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Descripción = table.Column<string>(type: "TEXT", nullable: false),
+                    Descripción = table.Column<string>(type: "TEXT", nullable: true),
                     Tipo = table.Column<int>(type: "INTEGER", nullable: false),
                     Existencia = table.Column<int>(type: "INTEGER", nullable: false)
                 },

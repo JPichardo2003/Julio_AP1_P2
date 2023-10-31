@@ -73,7 +73,6 @@ namespace Julio_AP1_P2.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripción")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Existencia")

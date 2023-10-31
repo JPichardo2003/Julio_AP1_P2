@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Julio_AP1_P2.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20231026234609_Inicial")]
-    partial class Inicial
+    [Migration("20231031182505_Inicial Migration")]
+    partial class InicialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,7 +76,6 @@ namespace Julio_AP1_P2.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripción")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Existencia")
