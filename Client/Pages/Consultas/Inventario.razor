@@ -1,0 +1,58 @@
+﻿@page "/Inventario"
+@inject HttpClient httpClient
+
+<div class="card">
+    <div class="card">
+
+        <div class="card-header">
+            <h3> Inventario de Productos  </h3>
+        </div>
+
+        @if (ListaProductos is not null)
+        {
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ProductoId</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Existencia</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in ListaProductos)
+                    {
+                        <tr>
+                            <td>@p.ProductoId</td>
+                            <td>@p.Descripción</td>
+                            <td>@p.Existencia</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>Cantidad: @conteo</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    public List<Productos>? ListaProductos { get; set; }
+    public int conteo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Buscar();
+    }
+
+    public async Task Buscar()
+    {
+        ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>($"api/Productos");
+
+        conteo = ListaProductos != null ? ListaProductos!.Count() : 0;
+        StateHasChanged();
+    }
+}
