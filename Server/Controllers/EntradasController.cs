@@ -40,7 +40,10 @@ namespace Julio_AP1_P2.Server.Controllers
           {
               return NotFound();
           }
-            var entradas = await _context.Entradas.FindAsync(id);
+            var entradas = await _context.Entradas
+            .Include(e => e.EntradasDetalle)
+            .Where(e => e.EntradaId == id)
+            .FirstOrDefaultAsync();
 
             if (entradas == null)
             {
@@ -86,14 +89,13 @@ namespace Julio_AP1_P2.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Entradas>> PostEntradas(Entradas entradas)
         {
-          if (_context.Entradas == null)
-          {
-              return Problem("Entity set 'Contexto.Entradas'  is null.");
-          }
-            _context.Entradas.Add(entradas);
-            await _context.SaveChangesAsync();
+            if(!EntradasExists(entradas.EntradaId))
+                _context.Entradas.Add(entradas);
+            else
+                _context.Entradas.Update(entradas);
 
-            return CreatedAtAction("GetEntradas", new { id = entradas.EntradaId }, entradas);
+            await _context.SaveChangesAsync();
+            return Ok(entradas);
         }
 
         // DELETE: api/Entradas/5
