@@ -38,7 +38,7 @@ namespace Julio_AP1_P2.Server.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripción = table.Column<string>(type: "TEXT", nullable: true),
                     Tipo = table.Column<int>(type: "INTEGER", nullable: false),
-                    Existencia = table.Column<int>(type: "INTEGER", nullable: false)
+                    Existencia = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,13 +71,13 @@ namespace Julio_AP1_P2.Server.Migrations
                 columns: new[] { "ProductoId", "Descripción", "Existencia", "Tipo" },
                 values: new object[,]
                 {
-                    { 1, "Maní", 40, 0 },
-                    { 2, "Pistachos", 600, 0 },
-                    { 3, "Pasas", 500, 0 },
-                    { 4, "Ciruelas", 700, 0 },
-                    { 5, "Mixto MPP 0.5lb", 0, 1 },
-                    { 6, "Mixto MPC 0.5lb", 0, 1 },
-                    { 7, "Mixto MPP 0.2lb", 0, 1 }
+                    { 1, "Maní", 40f, 0 },
+                    { 2, "Pistachos", 600f, 0 },
+                    { 3, "Pasas", 500f, 0 },
+                    { 4, "Ciruelas", 700f, 0 },
+                    { 5, "Mixto MPP 0.5lb", 0f, 1 },
+                    { 6, "Mixto MPC 0.5lb", 0f, 1 },
+                    { 7, "Mixto MPP 0.2lb", 0f, 1 }
                 });
 
             migrationBuilder.CreateIndex(

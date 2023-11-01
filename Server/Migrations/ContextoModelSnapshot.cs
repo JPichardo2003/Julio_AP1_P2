@@ -75,8 +75,8 @@ namespace Julio_AP1_P2.Server.Migrations
                     b.Property<string>("Descripción")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Existencia")
-                        .HasColumnType("INTEGER");
+                    b.Property<float>("Existencia")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Tipo")
                         .HasColumnType("INTEGER");
@@ -90,49 +90,49 @@ namespace Julio_AP1_P2.Server.Migrations
                         {
                             ProductoId = 1,
                             Descripción = "Maní",
-                            Existencia = 40,
+                            Existencia = 40f,
                             Tipo = 0
                         },
                         new
                         {
                             ProductoId = 2,
                             Descripción = "Pistachos",
-                            Existencia = 600,
+                            Existencia = 600f,
                             Tipo = 0
                         },
                         new
                         {
                             ProductoId = 3,
                             Descripción = "Pasas",
-                            Existencia = 500,
+                            Existencia = 500f,
                             Tipo = 0
                         },
                         new
                         {
                             ProductoId = 4,
                             Descripción = "Ciruelas",
-                            Existencia = 700,
+                            Existencia = 700f,
                             Tipo = 0
                         },
                         new
                         {
                             ProductoId = 5,
                             Descripción = "Mixto MPP 0.5lb",
-                            Existencia = 0,
+                            Existencia = 0f,
                             Tipo = 1
                         },
                         new
                         {
                             ProductoId = 6,
                             Descripción = "Mixto MPC 0.5lb",
-                            Existencia = 0,
+                            Existencia = 0f,
                             Tipo = 1
                         },
                         new
                         {
                             ProductoId = 7,
                             Descripción = "Mixto MPP 0.2lb",
-                            Existencia = 0,
+                            Existencia = 0f,
                             Tipo = 1
                         });
                 });
