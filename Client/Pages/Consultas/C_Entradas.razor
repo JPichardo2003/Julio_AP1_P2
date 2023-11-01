@@ -101,6 +101,7 @@
             Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.Concepto!.ToLower() == entradas!.Concepto.ToLower() && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
             StateHasChanged();
         }
+        else
         if(Filtro == 3 && entradas!.PesoTotal > 0)
         {
             Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.PesoTotal == entradas.PesoTotal && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
