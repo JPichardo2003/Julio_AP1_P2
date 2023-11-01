@@ -194,6 +194,7 @@
 
     public async Task Guardar()
     {
+        entradas.PesoTotal = PesoT;
         using var response = await httpClient.PostAsJsonAsync("api/Entradas", entradas);
         if (!response.IsSuccessStatusCode)
         {
@@ -239,11 +240,6 @@
                 };
             notificationService.Notify(mensaje);
             entradas = entradaDevuelta;
-            // if(Detalles != null)
-            // {
-            //     await httpClient.DeleteAsync($"api/Entradas/DeleteDetalles/{Detalles.DetalleId}");
-            // }
-
             StateHasChanged();
             this.Nuevo();
         }
