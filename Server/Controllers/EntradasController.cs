@@ -36,10 +36,10 @@ namespace Julio_AP1_P2.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Entradas>> GetEntradas(int id)
         {
-          if (_context.Entradas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entradas == null)
+            {
+                return NotFound();
+            }
             var entradas = await _context.Entradas
                 .Include(e => e.EntradasDetalle)
                 .Where(e => e.EntradaId == id)
