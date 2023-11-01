@@ -28,11 +28,6 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer text-center">
-            <button type="button" class="btn btn-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
-            <button class="btn btn-success">Guardar <i class="oi oi-document" /></button>
-            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
-        </div>
         @*Detalles:*@
         <div class="card card-header">
             <h3>Utilizados</h3>
@@ -63,7 +58,6 @@
                 </div>
             </div> 
         </div>
-        
         <table class='table table-responsive table-striped'>
             <thead>
                 <tr>
@@ -89,6 +83,35 @@
                 </tr>
             </tbody>
         </table>
+
+        <br />
+        <fieldset class="card card-header border border-1">
+            <legend>Producido</legend>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Producto</label>
+                    <InputSelect @bind-Value="entradas.CantidadProducida" class="form-select">
+                        <option value="0" hidden="hidden"> [Seleccione] </option>
+                        @foreach (var p in ListaProductos)
+                        {
+                            if (p.Tipo == 1)
+                            {
+                                <option value="@p.ProductoId">@p.Descripción</option>
+                            }
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-md-6">
+                    <label>Cantidad</label>
+                    <InputNumber @bind-Value="entradas.CantidadProducida" class="form-control"></InputNumber>
+                </div>
+            </div>
+        </fieldset>
+        <div class="card-footer text-center">
+            <button type="button" class="btn btn-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+            <button class="btn btn-success">Guardar <i class="oi oi-document" /></button>
+            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+        </div>
     </div>
 </EditForm>
 
@@ -297,7 +320,7 @@
             Detalles = detalleEncontrado;
             entradas.EntradasDetalle.Remove(detalle);
             PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
-            await httpClient.DeleteAsync($"api/Entradas/DeleteEntradaDetalle/{detalle.DetalleId}");
+            await httpClient.DeleteAsync($"api/Entradas/DeleteDetalles/{detalle.DetalleId}");
         }
         StateHasChanged();
     }
