@@ -1,0 +1,118 @@
+﻿@page "/ConsultaEntradas";
+@inject HttpClient httpClient
+
+<div class="card-header row">
+    <div class="col-md-4">
+        <label>Desde: </label>
+        <InputDate @bind-Value="Desde" class="form-control id-input"></InputDate>
+    </div>
+    <div class="col-md-4">
+        <label>Hasta: </label>
+        <InputDate @bind-Value="Hasta" class="form-control id-input"></InputDate>
+    </div>
+    <label>Filtrar Por:</label>
+    <div class="col-md-6 input-group filter-input">
+        <InputSelect @bind-Value="Filtro" class="form-select">
+            <option value="1">Entrada Id</option>
+            <option value="2">Concepto</option>
+            <option value="3">Peso Total</option> 
+        </InputSelect>
+        <div class="input-group-append">
+            <button type="button" class="btn btn-dark oi oi-magnifying-glass" @onclick="Buscar"></button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        @switch (Filtro)
+        {
+            case 1:
+                <InputNumber @bind-Value="entradas!.EntradaId" class="form-control"></InputNumber>
+                break;
+            case 2:
+                <InputText @bind-Value="entradas!.Concepto" class="form-control"></InputText>
+                break;
+            case 3:
+                <InputNumber @bind-Value="entradas!.PesoTotal" class="form-control"></InputNumber>
+                break;
+        }
+    </div>
+</div>
+
+@if (Entradas is not null)
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Entrada ID</th>
+                    <th>Concepto</th>
+                    <th>Fecha</th>
+                    <th>Peso Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entradas in Entradas)
+                {
+                    <tr>
+                        <td>@entradas.EntradaId</td>
+                        <td>@entradas.Concepto</td>
+                        <td>@entradas.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@entradas.PesoTotal</td>
+                        <td><a href="RegistroEntrada/@entradas.EntradaId">Ver</a></td>
+                    </tr>
+                }
+                <tr>
+                    <td>Conteo: @Conteo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+
+@code {
+
+    public int Filtro { get; set; }
+    public List<Entradas>? Entradas { get; set; }
+    public Entradas? entradas { get; set; } = new Entradas();
+    public int Conteo { get; set; }
+
+    public DateTime Desde { get; set; }
+    public DateTime Hasta { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Buscar();
+        Desde = DateTime.Now.AddMonths(-1);
+        Hasta = DateTime.Now;
+    }
+
+    public async Task Buscar()
+    {
+        if (Filtro == 1 && entradas!.EntradaId > 0)
+        {
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.EntradaId == entradas!.EntradaId && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            StateHasChanged();
+        }
+        else
+        if (Filtro == 2 && !string.IsNullOrEmpty(entradas!.Concepto))
+        {
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.Concepto!.ToLower() == entradas!.Concepto.ToLower() && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            StateHasChanged();
+        }
+        if(Filtro == 3 && entradas!.PesoTotal > 0)
+        {
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.PesoTotal == entradas.PesoTotal && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            StateHasChanged();
+        }
+        else
+        {
+            Entradas = await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas");
+            StateHasChanged();
+        }
+        Conteo = Entradas != null ? Entradas!.Count() : 0;
+    }
+
+}
+
