@@ -8,11 +8,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Julio_AP1_P2.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InicialMigration : Migration
+    public partial class NuevaMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Productos",
+                columns: table => new
+                {
+                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripción = table.Column<string>(type: "TEXT", nullable: true),
+                    Tipo = table.Column<int>(type: "INTEGER", nullable: false),
+                    Existencia = table.Column<float>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productos", x => x.ProductoId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Entradas",
                 columns: table => new
@@ -28,21 +43,12 @@ namespace Julio_AP1_P2.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Entradas", x => x.EntradaId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Productos",
-                columns: table => new
-                {
-                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Descripción = table.Column<string>(type: "TEXT", nullable: true),
-                    Tipo = table.Column<int>(type: "INTEGER", nullable: false),
-                    Existencia = table.Column<float>(type: "REAL", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productos", x => x.ProductoId);
+                    table.ForeignKey(
+                        name: "FK_Entradas_Productos_ProductoId",
+                        column: x => x.ProductoId,
+                        principalTable: "Productos",
+                        principalColumn: "ProductoId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,6 +87,11 @@ namespace Julio_AP1_P2.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Entradas_ProductoId",
+                table: "Entradas",
+                column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EntradasDetalle_EntradaId",
                 table: "EntradasDetalle",
                 column: "EntradaId");
@@ -93,10 +104,10 @@ namespace Julio_AP1_P2.Server.Migrations
                 name: "EntradasDetalle");
 
             migrationBuilder.DropTable(
-                name: "Productos");
+                name: "Entradas");
 
             migrationBuilder.DropTable(
-                name: "Entradas");
+                name: "Productos");
         }
     }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Julio_AP1_P2.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20231101003316_Inicial Migration")]
-    partial class InicialMigration
+    [Migration("20231102192447_Nueva Migracion")]
+    partial class NuevaMigracion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,8 @@ namespace Julio_AP1_P2.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("EntradaId");
+
+                    b.HasIndex("ProductoId");
 
                     b.ToTable("Entradas");
                 });
@@ -140,6 +142,15 @@ namespace Julio_AP1_P2.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Julio_AP1_P2.Shared.Models.Entradas", b =>
+                {
+                    b.HasOne("Julio_AP1_P2.Shared.Models.Productos", null)
+                        .WithMany("Entradas")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Julio_AP1_P2.Shared.Models.EntradasDetalle", b =>
                 {
                     b.HasOne("Julio_AP1_P2.Shared.Models.Entradas", null)
@@ -152,6 +163,11 @@ namespace Julio_AP1_P2.Server.Migrations
             modelBuilder.Entity("Julio_AP1_P2.Shared.Models.Entradas", b =>
                 {
                     b.Navigation("EntradasDetalle");
+                });
+
+            modelBuilder.Entity("Julio_AP1_P2.Shared.Models.Productos", b =>
+                {
+                    b.Navigation("Entradas");
                 });
 #pragma warning restore 612, 618
         }
