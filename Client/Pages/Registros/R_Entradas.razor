@@ -90,8 +90,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <label>Producto</label>
-                    <InputSelect @bind-Value="entradas.CantidadProducida" class="form-select">
-                        <option value="0" hidden="hidden"> [Seleccione] </option>
+                    <InputSelect @bind-Value="entradas.ProductoId" class="form-select">
+                        <option value="0" hidden="hidden">Seleccione</option>
                         @foreach (var p in ListaProductos)
                         {
                             if (p.Tipo == 1)
@@ -195,6 +195,173 @@
     public async Task Guardar()
     {
         entradas.PesoTotal = PesoT;
+        if (entradas.ProductoId == 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Debe seleccionar un producto para la producción.",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
+            return;
+        }
+        if (entradas.CantidadProducida <= 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Cantidad no válida",
+                    Detail = "La cantidad producida debe ser mayor que cero.",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
+            return;
+        }
+        if (entradas.ProductoId == 5)
+        {
+            if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && entradas.EntradasDetalle.Any(p => p.ProductoId == 2) && entradas.EntradasDetalle.Any(p => p.ProductoId == 3))
+            {
+                float gramosTotales = entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 1)
+                                             .Sum(p => p.CantidadUtilizada) + entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 2).Sum(p => p.CantidadUtilizada)
+                                             + entradas.EntradasDetalle.Where(p => p.ProductoId == 3).Sum(p => p.CantidadUtilizada);
+                if (gramosTotales / 226.80 <= 1)
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = "El Peso Total debe ser >= 226.80 para poder crear este producto.",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+                else if (entradas.CantidadProducida >= gramosTotales / 226.80)
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = $"Para Producir esa cantidad de {ObtenerDescripción(entradas.ProductoId)} necesita mas Utilizados",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+            }
+            else
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "No tiene los Utilizados Necesarios: (Mani | Pasas | Pistachos)",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+                return;
+            }
+        }
+        else if (entradas.ProductoId == 6)
+        {
+            if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && entradas.EntradasDetalle.Any(p => p.ProductoId == 2) || (entradas.EntradasDetalle.Any(p => p.ProductoId == 3) && entradas.EntradasDetalle.Any(p => p.ProductoId == 4)))
+            {
+                float gramosTotales = entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 1)
+                                             .Sum(p => p.CantidadUtilizada) + entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 2).Sum(p => p.CantidadUtilizada)
+                                             + entradas.EntradasDetalle.Where(p => p.ProductoId == 3).Sum(p => p.CantidadUtilizada)
+                                             + entradas.EntradasDetalle.Where(p => p.ProductoId == 4).Sum(p => p.CantidadUtilizada);
+                if ((int)(gramosTotales / 226.80) <= 1)
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = "El Peso Total debe ser >= 226.80 para poder crear este producto.",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+                else if (entradas.CantidadProducida > (int)(gramosTotales / 226.80))
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = $"Para Producir esa cantidad de {ObtenerDescripción(entradas.ProductoId)} necesita mas Utilizados",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+            }
+            else
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "No tiene los Utilizados Necesarios: (Mani | Pasas | Pistachos | Ciruelas)",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+                return;
+            }
+        }
+        else if (entradas.ProductoId == 7)
+        {
+            if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && entradas.EntradasDetalle.Any(p => p.ProductoId == 2) && entradas.EntradasDetalle.Any(p => p.ProductoId == 3))
+            {
+                float gramosTotales = entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 1)
+                                             .Sum(p => p.CantidadUtilizada) + entradas.EntradasDetalle
+                                             .Where(p => p.ProductoId == 2).Sum(p => p.CantidadUtilizada)
+                                             + entradas.EntradasDetalle.Where(p => p.ProductoId == 3).Sum(p => p.CantidadUtilizada);
+                if (gramosTotales / 90.72 <= 1)
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = "El Peso Total debe ser >= 90.72 para poder crear este producto.",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+
+                }
+                else if (entradas.CantidadProducida > (int)(gramosTotales / 90.72))
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = $"Para Producir esa cantidad de {ObtenerDescripción(entradas.ProductoId)} necesita mas Utilizados",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+            }
+            else
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "No tiene los Utilizados Necesarios: (Mani | Pasas | Pistachos)",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+                return;
+            }
+        }
         using var response = await httpClient.PostAsJsonAsync("api/Entradas", entradas);
         if (!response.IsSuccessStatusCode)
         {
@@ -235,7 +402,7 @@
                 {
                     Severity = NotificationSeverity.Success,
                     Summary = "Validacion",
-                    Detail = "Ticket Guardado Correctamente",
+                    Detail = "Entrada Guardada Correctamente",
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
@@ -263,7 +430,7 @@
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = "Error",
-                    Detail = "El Ticket no fue Eliminado Correctamente",
+                    Detail = "La Entrada no fue Eliminada Correctamente",
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
@@ -275,7 +442,7 @@
                 {
                     Severity = NotificationSeverity.Success,
                     Summary = "Validacion",
-                    Detail = "Ticket Eliminado Correctamente",
+                    Detail = "Entrada Eliminada Correctamente",
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
@@ -328,10 +495,6 @@
             ListaDetalles.Add(Detalles);
             Detalles = new EntradasDetalle();
             PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
-
-        }
-        else
-        {
 
         }
         StateHasChanged();
