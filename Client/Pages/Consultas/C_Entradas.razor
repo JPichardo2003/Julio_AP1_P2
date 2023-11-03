@@ -15,7 +15,9 @@
         <InputSelect @bind-Value="Filtro" class="form-select">
             <option value="1">Entrada Id</option>
             <option value="2">Concepto</option>
-            <option value="3">Peso Total</option> 
+            <option value="3">Peso Total</option>
+            <option value="4">Cantidad Producida</option>
+            <option value="5">Producto Id</option>
         </InputSelect>
         <div class="input-group-append">
             <button type="button" class="btn btn-dark oi oi-magnifying-glass" @onclick="Buscar"></button>
@@ -33,6 +35,12 @@
             case 3:
                 <InputNumber @bind-Value="entradas!.PesoTotal" class="form-control"></InputNumber>
                 break;
+            case 4:
+                <InputNumber @bind-Value="entradas!.CantidadProducida" class="form-control"></InputNumber>
+                break;
+            case 5:
+                <InputNumber @bind-Value="entradas!.ProductoId" class="form-control"></InputNumber>
+                break;
         }
     </div>
 </div>
@@ -47,6 +55,8 @@
                     <th>Concepto</th>
                     <th>Fecha</th>
                     <th>Peso Total</th>
+                    <th>Cantidad Producida</th>
+                    <th>Producto Id</th>
                     <th></th>
                 </tr>
             </thead>
@@ -58,6 +68,8 @@
                         <td>@entradas.Concepto</td>
                         <td>@entradas.Fecha.ToString("dd/MM/yyyy")</td>
                         <td>@entradas.PesoTotal</td>
+                        <td>@entradas.CantidadProducida</td>
+                        <td>@entradas.ProductoId</td>
                         <td><a href="RegistroEntrada/@entradas.EntradaId">Ver</a></td>
                     </tr>
                 }
@@ -105,6 +117,17 @@
         if(Filtro == 3 && entradas!.PesoTotal > 0)
         {
             Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.PesoTotal == entradas.PesoTotal && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            StateHasChanged();
+        }else
+        if (Filtro == 4 && entradas!.CantidadProducida > 0)
+        {
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.CantidadProducida == entradas.CantidadProducida && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            StateHasChanged();
+        }
+        else
+        if(Filtro == 5 && entradas!.ProductoId > 0)
+        {
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.ProductoId == entradas.ProductoId && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
             StateHasChanged();
         }
         else
