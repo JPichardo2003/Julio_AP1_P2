@@ -240,13 +240,25 @@
                     notificationService.Notify(mensaje);
                     return;
                 }
-                else if (entradas.CantidadProducida >= gramosTotales / 226.80)
+                else if (entradas.CantidadProducida >= (int)gramosTotales / 226.80)
                 {
                     var mensaje = new NotificationMessage
                         {
                             Severity = NotificationSeverity.Error,
                             Summary = "Error",
                             Detail = $"Para Producir esa cantidad de {ObtenerDescripción(entradas.ProductoId)} necesita mas Utilizados",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+                else if (entradas.EntradasDetalle.Any(p => p.ProductoId == 4))
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = $"El Paquete que desea crear {ObtenerDescripción(entradas.ProductoId)} no lleva Ciruelas",
                             Duration = 4_000
                         };
                     notificationService.Notify(mensaje);
@@ -269,14 +281,14 @@
         else if (entradas.ProductoId == 6)
         {
             if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && entradas.EntradasDetalle.Any(p => p.ProductoId == 2) || (entradas.EntradasDetalle.Any(p => p.ProductoId == 3) && entradas.EntradasDetalle.Any(p => p.ProductoId == 4)))
-            {
+            {      
                 float gramosTotales = entradas.EntradasDetalle
                                              .Where(p => p.ProductoId == 1)
                                              .Sum(p => p.CantidadUtilizada) + entradas.EntradasDetalle
                                              .Where(p => p.ProductoId == 2).Sum(p => p.CantidadUtilizada)
                                              + entradas.EntradasDetalle.Where(p => p.ProductoId == 3).Sum(p => p.CantidadUtilizada)
                                              + entradas.EntradasDetalle.Where(p => p.ProductoId == 4).Sum(p => p.CantidadUtilizada);
-                if ((int)(gramosTotales / 226.80) <= 1)
+                if (gramosTotales / 226.80 <= 1)
                 {
                     var mensaje = new NotificationMessage
                         {
@@ -343,6 +355,18 @@
                             Severity = NotificationSeverity.Error,
                             Summary = "Error",
                             Detail = $"Para Producir esa cantidad de {ObtenerDescripción(entradas.ProductoId)} necesita mas Utilizados",
+                            Duration = 4_000
+                        };
+                    notificationService.Notify(mensaje);
+                    return;
+                }
+                else if (entradas.EntradasDetalle.Any(p => p.ProductoId == 4))
+                {
+                    var mensaje = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = $"El Paquete que desea crear {ObtenerDescripción(entradas.ProductoId)} no lleva Ciruelas",
                             Duration = 4_000
                         };
                     notificationService.Notify(mensaje);
@@ -493,6 +517,8 @@
             Detalles.EntradaId = entradas.EntradaId;
             entradas.EntradasDetalle.Add(Detalles);
             ListaDetalles.Add(Detalles);
+            if (DetallesRemovidos.Any(d => d.DetalleId == Detalles.DetalleId))
+                DetallesRemovidos.Remove(Detalles);
             Detalles = new EntradasDetalle();
             PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
 
@@ -510,6 +536,8 @@
             Detalles = detalleEncontrado;
             entradas.EntradasDetalle.Remove(detalle);
             DetallesRemovidos.Add(detalleEncontrado);
+            if (ListaDetalles.Any(d => d.DetalleId == detalleEncontrado.DetalleId))
+                ListaDetalles.Remove(detalleEncontrado);
             PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
         }
         StateHasChanged();
