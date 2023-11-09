@@ -79,7 +79,7 @@
                     </tr>
                 }
                 <tr>
-                    <td>Peso Total: @PesoT</td>
+                    <td>Peso Total: @PesoT g</td>
                 </tr>
             </tbody>
         </table>
@@ -280,7 +280,7 @@
         }
         else if (entradas.ProductoId == 6)
         {
-            if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && entradas.EntradasDetalle.Any(p => p.ProductoId == 2) || (entradas.EntradasDetalle.Any(p => p.ProductoId == 3) && entradas.EntradasDetalle.Any(p => p.ProductoId == 4)))
+            if (entradas.CantidadProducida > 0 && entradas.EntradasDetalle.Any(p => p.ProductoId == 1) && (entradas.EntradasDetalle.Any(p => p.ProductoId == 2) || entradas.EntradasDetalle.Any(p => p.ProductoId == 3)) && entradas.EntradasDetalle.Any(p => p.ProductoId == 4))
             {      
                 float gramosTotales = entradas.EntradasDetalle
                                              .Where(p => p.ProductoId == 1)
@@ -412,7 +412,6 @@
                     using var responseDetalleEliminado = await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{reducir.ProductoId}", reducir);
                 }      
             }
-
             if (ListaDetalles.Count > 0)
             {
                 foreach (var detalle in ListaDetalles)
@@ -451,9 +450,6 @@
 
     public async Task Eliminar()
     {
-
-        var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
-        producto!.Existencia -= entradas.CantidadProducida;
         using var response = await httpClient.DeleteAsync($"api/Entradas/{entradas.EntradaId}");
         if (!response.IsSuccessStatusCode)
         {
@@ -477,8 +473,9 @@
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
+            var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
+            producto!.Existencia -= entradas.CantidadProducida;
             await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
-
         }
         Nuevo();
     }
