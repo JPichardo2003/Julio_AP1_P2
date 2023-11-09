@@ -126,10 +126,8 @@
     public List<EntradasDetalle> DetallesRemovidos { get; set; } = new List<EntradasDetalle>();
     public List<EntradasDetalle> ListaDetalles { get; set; } = new List<EntradasDetalle>();
 
-    public float C_Utilizada { get; set; } = 0;
-    public int P_Id { get; set; } = 0;
     public float PesoT { get; set; } = 0;
-
+    public int ReducirProducido = 0;
     public bool idVacio;
     public bool cantidadCero;
 
@@ -175,6 +173,7 @@
             {
                 this.entradas = entradaEncontrada;
                 PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
+                ReducirProducido = entradas.CantidadProducida;
                 StateHasChanged();
             }
         }
@@ -431,7 +430,7 @@
             notificationService.Notify(mensaje);
             entradas = entradaDevuelta;
             var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradaDevuelta.ProductoId);
-            producto!.Existencia += entradaDevuelta.CantidadProducida;
+            producto!.Existencia += entradaDevuelta.CantidadProducida - ReducirProducido;
             await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
 
             StateHasChanged();
@@ -446,6 +445,7 @@
         DetallesRemovidos = new List<EntradasDetalle>();
         ListaDetalles = new List<EntradasDetalle>();
         PesoT = 0;
+        ReducirProducido = 0;
     }
 
     public async Task Eliminar()
