@@ -110,13 +110,20 @@
         else
         if (Filtro == 2 && !string.IsNullOrEmpty(entradas!.Concepto))
         {
-            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.Concepto!.ToLower() == entradas!.Concepto.ToLower() && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            var conceptoBusqueda = entradas!.Concepto.ToLower();
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!
+                .Where(t => t.Concepto != null && t.Concepto.ToLower().Contains(conceptoBusqueda) && t.Fecha >= Desde.Date && t.Fecha <= Hasta)
+                .ToList();
             StateHasChanged();
         }
         else
         if(Filtro == 3 && entradas!.PesoTotal > 0)
         {
-            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.PesoTotal == entradas.PesoTotal && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            var pesoMinimo = entradas.PesoTotal;
+            var pesoMaximo = entradas.PesoTotal + 99; // Rango de 100
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!
+                .Where(t => t.PesoTotal >= pesoMinimo && t.PesoTotal <= pesoMaximo && t.Fecha >= Desde.Date && t.Fecha <= Hasta)
+                .ToList();
             StateHasChanged();
         }else
         if (Filtro == 4 && entradas!.CantidadProducida > 0)
