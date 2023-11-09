@@ -22,7 +22,7 @@ namespace Julio_AP1_P2.Shared.Models
         public float PesoTotal { get; set; }
         public int ProductoId { get; set; }
 
-        public float CantidadProducida { get; set; }
+        public int CantidadProducida { get; set; }
 
         [ForeignKey("EntradaId")]
         public ICollection<EntradasDetalle> EntradasDetalle { get; set; } = new List<EntradasDetalle>();
