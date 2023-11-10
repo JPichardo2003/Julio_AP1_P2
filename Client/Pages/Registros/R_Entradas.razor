@@ -520,9 +520,12 @@
 
         if (entradas != null)
         {
+            var detalleEncontrado = await httpClient.GetFromJsonAsync<List<EntradasDetalle>>($"api/Entradas");
+            var detalleExiste = detalleEncontrado!.Any(d => d.DetalleId == Detalles.DetalleId);
             Detalles.EntradaId = entradas.EntradaId;
             entradas.EntradasDetalle.Add(Detalles);
-            ListaDetalles.Add(Detalles);
+            if(detalleExiste)
+                ListaDetalles.Add(Detalles);
             if (DetallesRemovidos.Any(d => d.DetalleId == Detalles.DetalleId))
                 DetallesRemovidos.Remove(Detalles);
             Detalles = new EntradasDetalle();
@@ -534,18 +537,12 @@
 
     public void RemoverDetalle(EntradasDetalle detalle)
     {
-        var detalleEncontrado = entradas.EntradasDetalle.FirstOrDefault(d => d.DetalleId == detalle.DetalleId);
-        if(detalleEncontrado != null)
-        {
-            var entrada = BuscarEntrada(detalleEncontrado.EntradaId);
-            detalle = detalleEncontrado;
-            Detalles = detalleEncontrado;
-            entradas.EntradasDetalle.Remove(detalle);
-            DetallesRemovidos.Add(detalleEncontrado);
-            if (ListaDetalles.Any(d => d.DetalleId == detalleEncontrado.DetalleId))
-                ListaDetalles.Remove(detalleEncontrado);
-            PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
-        }
+        Detalles = detalle;
+        entradas.EntradasDetalle.Remove(detalle);
+        DetallesRemovidos.Add(detalle);
+        if (ListaDetalles.Any(d => d.DetalleId == detalle.DetalleId))
+            ListaDetalles.Remove(detalle);
+        PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
         StateHasChanged();
     }
 
