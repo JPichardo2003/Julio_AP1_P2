@@ -163,6 +163,7 @@
     public async Task Buscar()
     {
         ListaDetalles = new List<EntradasDetalle>();
+        DetallesRemovidos = new List<EntradasDetalle>();
         var entradaIdEncontrada = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!
         .ToList()
         .Any(e => e.EntradaId == entradas.EntradaId);
@@ -450,6 +451,7 @@
 
     public async Task Eliminar()
     {
+        var detallesEliminados = new List<EntradasDetalle>(entradas.EntradasDetalle);
         using var response = await httpClient.DeleteAsync($"api/Entradas/{entradas.EntradaId}");
         if (!response.IsSuccessStatusCode)
         {
@@ -473,6 +475,17 @@
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
+
+            foreach (var detalle in detallesEliminados)
+            {
+                var productos = ListaProductos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+                if (productos != null)
+                {
+                    productos.Existencia += detalle.CantidadUtilizada;
+                    await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{productos.ProductoId}", productos);
+                }
+            }
+
             var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
             producto!.Existencia -= entradas.CantidadProducida;
             await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
