@@ -451,45 +451,62 @@
 
     public async Task Eliminar()
     {
-        var detallesEliminados = new List<EntradasDetalle>(entradas.EntradasDetalle);
-        using var response = await httpClient.DeleteAsync($"api/Entradas/{entradas.EntradaId}");
-        if (!response.IsSuccessStatusCode)
+        var producidoModificado = await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas");
+        if(producidoModificado!.FirstOrDefault(p => p.EntradaId == entradas.EntradaId)!.CantidadProducida == entradas.CantidadProducida)
         {
-            var mensaje = new NotificationMessage
+            var detallesEliminados = new List<EntradasDetalle>(entradas.EntradasDetalle);
+            using var response = await httpClient.DeleteAsync($"api/Entradas/{entradas.EntradaId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "La entrada no fue Eliminada Correctamente",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+                return;
+            }
+            else
+            {
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Validacion",
+                        Detail = "Entrada Eliminada Correctamente",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+
+                foreach (var detalle in detallesEliminados)
                 {
-                    Severity = NotificationSeverity.Error,
-                    Summary = "Error",
-                    Detail = "La entrada no fue Eliminada Correctamente",
-                    Duration = 4_000
-                };
-            notificationService.Notify(mensaje);
-            return;
+                    var productos = ListaProductos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+                    if (productos != null)
+                    {
+                        productos.Existencia += detalle.CantidadUtilizada;
+                        await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{productos.ProductoId}", productos);
+                    }
+                }
+
+                var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
+                producto!.Existencia -= entradas.CantidadProducida;
+                await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
+            }
         }
         else
         {
             var mensaje = new NotificationMessage
                 {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "Validacion",
-                    Detail = "Entrada Eliminada Correctamente",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "No se puede eliminar porque ha modificado la cantidad producida",
                     Duration = 4_000
                 };
             notificationService.Notify(mensaje);
-
-            foreach (var detalle in detallesEliminados)
-            {
-                var productos = ListaProductos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
-                if (productos != null)
-                {
-                    productos.Existencia += detalle.CantidadUtilizada;
-                    await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{productos.ProductoId}", productos);
-                }
-            }
-
-            var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
-            producto!.Existencia -= entradas.CantidadProducida;
-            await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
+            return;
         }
+
         Nuevo();
     }
 
