@@ -66,7 +66,7 @@
                     <tr>
                         <td>@entradas.EntradaId</td>
                         <td>@entradas.Concepto</td>
-                        <td>@entradas.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@entradas.Fecha.ToString("MM/dd/yyyy")</td>
                         <td>@entradas.PesoTotal</td>
                         <td>@entradas.CantidadProducida</td>
                         <td>@entradas.ProductoId</td>
@@ -104,7 +104,7 @@
     {
         if (Filtro == 1 && entradas!.EntradaId > 0)
         {
-            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.EntradaId == entradas!.EntradaId && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.EntradaId == entradas!.EntradaId && t.Fecha.Date >= Desde.Date && t.Fecha.Date <= Hasta.Date).ToList();
             StateHasChanged();
         }
         else
@@ -112,7 +112,7 @@
         {
             var conceptoBusqueda = entradas!.Concepto.ToLower();
             Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!
-                .Where(t => t.Concepto != null && t.Concepto.ToLower().Contains(conceptoBusqueda) && t.Fecha >= Desde.Date && t.Fecha <= Hasta)
+                .Where(t => t.Concepto != null && t.Concepto.ToLower().Contains(conceptoBusqueda) && t.Fecha.Date >= Desde.Date && t.Fecha.Date <= Hasta.Date)
                 .ToList();
             StateHasChanged();
         }
@@ -122,19 +122,19 @@
             var pesoMinimo = entradas.PesoTotal;
             var pesoMaximo = entradas.PesoTotal + 99; // Rango de 100
             Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!
-                .Where(t => t.PesoTotal >= pesoMinimo && t.PesoTotal <= pesoMaximo && t.Fecha >= Desde.Date && t.Fecha <= Hasta)
+                .Where(t => t.PesoTotal >= pesoMinimo && t.PesoTotal <= pesoMaximo && t.Fecha.Date >= Desde.Date && t.Fecha.Date <= Hasta.Date)
                 .ToList();
             StateHasChanged();
         }else
         if (Filtro == 4 && entradas!.CantidadProducida > 0)
         {
-            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.CantidadProducida == entradas.CantidadProducida && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.CantidadProducida == entradas.CantidadProducida && t.Fecha.Date >= Desde.Date && t.Fecha.Date <= Hasta.Date).ToList();
             StateHasChanged();
         }
         else
         if(Filtro == 5 && entradas!.ProductoId > 0)
         {
-            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.ProductoId == entradas.ProductoId && t.Fecha >= Desde.Date && t.Fecha <= Hasta).ToList();
+            Entradas = (await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas"))!.Where(t => t.ProductoId == entradas.ProductoId && t.Fecha.Date >= Desde.Date && t.Fecha.Date <= Hasta.Date).ToList();
             StateHasChanged();
         }
         else
