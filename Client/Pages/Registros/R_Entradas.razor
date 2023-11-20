@@ -129,6 +129,7 @@
     public int ReducirProducido = 0;
     public bool idVacio;
     public bool cantidadCero;
+    public int ProductoIdAnterior { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -171,6 +172,7 @@
             var entradaEncontrada = await httpClient.GetFromJsonAsync<Entradas>($"api/Entradas/{entradas.EntradaId}");
             if (entradaEncontrada != null)
             {
+                ProductoIdAnterior = entradaEncontrada.ProductoId;
                 this.entradas = entradaEncontrada;
                 PesoT = entradas.EntradasDetalle.Sum(e => e.CantidadUtilizada);
                 ReducirProducido = entradas.CantidadProducida;
@@ -429,10 +431,22 @@
                 };
             notificationService.Notify(mensaje);
             entradas = entradaDevuelta;
-            var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradaDevuelta.ProductoId);
-            producto!.Existencia += entradaDevuelta.CantidadProducida - ReducirProducido;
-            await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
+            if (entradas.ProductoId != ProductoIdAnterior && ProductoIdAnterior != 0)
+            {
+                var productoAnterior = ListaProductos.FirstOrDefault(p => p.ProductoId == ProductoIdAnterior);
+                productoAnterior!.Existencia -= ReducirProducido;
+                await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{productoAnterior.ProductoId}", productoAnterior);
 
+                var productoNuevo = ListaProductos.FirstOrDefault(p => p.ProductoId == entradas.ProductoId);
+                productoNuevo!.Existencia += entradas.CantidadProducida;
+                await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{productoNuevo.ProductoId}", productoNuevo);
+            }
+            else
+            {
+                var producto = ListaProductos.FirstOrDefault(p => p.ProductoId == entradaDevuelta.ProductoId);
+                producto!.Existencia += entradaDevuelta.CantidadProducida - ReducirProducido;
+                await httpClient.PutAsJsonAsync<Productos>($"api/Productos/{producto.ProductoId}", producto);
+            }
             StateHasChanged();
             this.Nuevo();
         }
