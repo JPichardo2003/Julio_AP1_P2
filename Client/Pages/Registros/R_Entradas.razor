@@ -196,6 +196,18 @@
     public async Task Guardar()
     {
         entradas.PesoTotal = PesoT;
+        if(entradas.EntradaId < 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "La entradaID no puede ser Negativa.",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
+            return;
+        }
         if (entradas.ProductoId == 0)
         {
             var mensaje = new NotificationMessage
