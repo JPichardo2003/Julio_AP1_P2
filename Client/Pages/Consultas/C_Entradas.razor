@@ -54,9 +54,9 @@
                     <th>Entrada ID</th>
                     <th>Concepto</th>
                     <th>Fecha</th>
-                    <th>Peso Total</th>
                     <th>Cantidad Producida</th>
                     <th>Producto Id</th>
+                    <th>Peso Total</th>
                     <th></th>
                 </tr>
             </thead>
@@ -67,14 +67,16 @@
                         <td>@entradas.EntradaId</td>
                         <td>@entradas.Concepto</td>
                         <td>@entradas.Fecha.ToString("MM/dd/yyyy")</td>
-                        <td>@entradas.PesoTotal</td>
                         <td>@entradas.CantidadProducida</td>
                         <td>@entradas.ProductoId</td>
+                        <td>@entradas.PesoTotal</td>
                         <td><a href="RegistroEntrada/@entradas.EntradaId">Ver</a></td>
                     </tr>
                 }
                 <tr>
                     <td>Conteo: @Conteo</td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td>Total: @TotalPesos</td>
