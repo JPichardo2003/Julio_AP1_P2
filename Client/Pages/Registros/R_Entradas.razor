@@ -70,8 +70,7 @@
             <tbody>
                 @foreach (var detalle in entradas.EntradasDetalle)
                 {
-                    var entradaEncontrada = BuscarEntrada(detalle.EntradaId);
-                    <tr>
+                   <tr>
                         <td>@detalle.ProductoId</td>
                         <td>@ObtenerDescripción(detalle.ProductoId)</td>
                         <td>@detalle.CantidadUtilizada</td>

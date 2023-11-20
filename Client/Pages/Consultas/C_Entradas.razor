@@ -75,6 +75,9 @@
                 }
                 <tr>
                     <td>Conteo: @Conteo</td>
+                    <td></td>
+                    <td></td>
+                    <td>Total: @TotalPesos</td>
                 </tr>
             </tbody>
         </table>
@@ -88,6 +91,7 @@
     public List<Entradas>? Entradas { get; set; }
     public Entradas? entradas { get; set; } = new Entradas();
     public int Conteo { get; set; }
+    public float TotalPesos { get; set; }
 
     public DateTime Desde { get; set; }
     public DateTime Hasta { get; set; }
@@ -143,6 +147,7 @@
             StateHasChanged();
         }
         Conteo = Entradas != null ? Entradas!.Count() : 0;
+        TotalPesos = Entradas != null ? Entradas!.Sum(p => p.PesoTotal) : 0;
     }
 
 }
