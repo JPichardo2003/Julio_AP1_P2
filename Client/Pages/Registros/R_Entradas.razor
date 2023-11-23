@@ -477,7 +477,7 @@
     public async Task Eliminar()
     {
         var producidoModificado = await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas");
-        if(producidoModificado!.FirstOrDefault(p => p.EntradaId == entradas.EntradaId)!.CantidadProducida == entradas.CantidadProducida)
+        if(entradas.EntradaId == 0 || producidoModificado!.FirstOrDefault(p => p.EntradaId == entradas.EntradaId)!.CantidadProducida == entradas.CantidadProducida)
         {
             var detallesEliminados = new List<EntradasDetalle>(entradas.EntradasDetalle);
             using var response = await httpClient.DeleteAsync($"api/Entradas/{entradas.EntradaId}");
